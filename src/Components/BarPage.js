@@ -1,18 +1,25 @@
 import React from "react";
 import Bar from "./Bar";
-import { useParams } from "react-router-dom";
-
-const useBar = bars => {
-  const { id } = useParams();
-  const bar = bars.find(bar => bar.id === id);
-  return bar;
-};
+import { useParams, Redirect } from "react-router-dom";
 
 const BarPage = props => {
-  const bar = useBar(props.bars);
+  const { id } = useParams();
+  const DisplayBar = () => {
+    if (props.error) {
+      return <p className="bar-box">Une erreur est survenue</p>;
+    }
+    if (props.isLoading) {
+      return <p className="bar-box">Loading...</p>;
+    }
+    const bar = props.bars.find(bar => bar.id === id);
+    if (!bar) {
+      return <Redirect to="/" />;
+    }
+    return <Bar bar={bar} addLikeToBar={props.addLikeToBar} displayDetails />;
+  };
   return (
     <React.Fragment>
-      <Bar bar={bar} addLikeToBar={props.addLikeToBar} displayDetails />
+      <DisplayBar />
     </React.Fragment>
   );
 };

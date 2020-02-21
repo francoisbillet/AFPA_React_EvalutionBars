@@ -1,24 +1,24 @@
 import React from "react";
-import Bar from "./Bar";
+// import Bar from "./Bar";
+import BarList from "./BarList";
 
 const HomePage = props => {
+  const DisplayBars = () => {
+    if (props.error) {
+      return <p className="bar-box">Une erreur est survenue</p>;
+    }
+    if (props.isLoading) {
+      return <p className="bar-box">Loading...</p>;
+    }
+    return <BarList bars={props.bars} />;
+  };
   //   console.log(!props.bars);
-  if (props.bars.length === 0) {
-    return <div>Loading...</div>;
-  } else {
-    return (
-      <React.Fragment>
-        <h1 className="main-title">Les bars de Toulouse</h1>
-        <ul>
-          {props.bars.map(bar => (
-            <li key={bar.id}>
-              <Bar bar={bar} />
-            </li>
-          ))}
-        </ul>
-      </React.Fragment>
-    );
-  }
+  return (
+    <React.Fragment>
+      <h1 className="main-title">Les bars de Toulouse</h1>
+      <DisplayBars />
+    </React.Fragment>
+  );
 };
 
 export default HomePage;

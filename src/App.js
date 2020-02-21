@@ -13,6 +13,9 @@ const usePersistedState = createPersistedState("bars");
 
 const useBars = () => {
   const [bars, setBars] = usePersistedState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
+
   const addLikeToBar = bar => {
     setBars(
       bars.map(element => {
@@ -31,6 +34,7 @@ const useBars = () => {
     fetch(`https://control-server.now.sh/`)
       .then(body => body.json())
       .then(response => {
+        setError(null);
         if (bars.length !== 0) {
           setBars(
             bars.map(bar => {
@@ -41,30 +45,38 @@ const useBars = () => {
         } else {
           setBars(response);
         }
+      })
+      .catch(() => {
+        setError("Une erreur est survenue");
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
-  return [bars, addLikeToBar];
+  return [bars, addLikeToBar, isLoading, error];
 };
 
 function App() {
-  const [bars, addLikeToBar] = useBars();
-  // console.log(bars);
+  const [bars, addLikeToBar, isLoading, error] = useBars();
   return (
     <BrowserRouter>
       <Header />
-      <hr />
       <Switch>
         <Route exact path="/">
-          <HomePage bars={bars} />
+          <HomePage bars={bars} isLoading={isLoading} error={error} />
         </Route>
         <Route exact path="/bar/:id">
-          <BarPage bars={bars} addLikeToBar={addLikeToBar} />
+          <BarPage
+            bars={bars}
+            addLikeToBar={addLikeToBar}
+            isLoading={isLoading}
+            error={error}
+          />
         </Route>
         <Route exact path="/me">
           <MePage />
         </Route>
       </Switch>
-      <hr />
       <Footer />
     </BrowserRouter>
   );
