@@ -17,19 +17,34 @@ const useBars = () => {
   const [error, setError] = React.useState(null);
 
   const addLikeToBar = bar => {
-    setBars(
-      bars.map(element => {
-        if (element.id === bar.id) {
-          return {
-            ...element,
-            nbLike: element.nbLike + 1
-          };
-        } else {
-          return element;
-        }
-      })
-    );
+    // AJOUTER UN LIKE A L'ELEMENT AVEC LE SETBARS
+    // setBars(
+    //   bars.map(element => {
+    //     if (element.id === bar.id) {
+    //       return {
+    //         ...element,
+    //         nbLike: element.nbLike + 1
+    //       };
+    //     } else {
+    //       return element;
+    //     }
+    //   })
+    // );
+
+    // AJOUTER UN LIKE A L'ELEMENT SUR LE SERVEUR AVEC LE SETBARS
+    fetch(`https://control-server.now.sh/likes`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ id: bar.id })
+    })
+      .then(response => response.json())
+      .then(data => {
+        setBars(data);
+      });
   };
+
   React.useEffect(() => {
     fetch(`https://control-server.now.sh/`)
       .then(body => body.json())
